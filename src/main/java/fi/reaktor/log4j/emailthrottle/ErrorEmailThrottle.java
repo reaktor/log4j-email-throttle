@@ -21,14 +21,14 @@ import org.apache.log4j.spi.TriggeringEventEvaluator;
 
 public class ErrorEmailThrottle implements TriggeringEventEvaluator {
 
-    private final long throttledEmailIntervalMilliSecs;
     private final long throttleModeTriggerTimeMilliSecs;
+    private final long throttledEmailIntervalMilliSecs;
     private final long throttleModeStopTimeMilliSecs;
     private long lastTriggerTime = 0;
     private long lastEventTime = 0;
     boolean inThrottleMode = false;
 
-    private static Long getTimeIntervalPropertyInSeconds(String name, long defaultValueInSeconds) {
+    private static Long getTimeIntervalPropertyInMilliSeconds(String name, long defaultValueInSeconds) {
         long value = Long.getLong(ErrorEmailThrottle.class.getPackage().getName()+ "." + name,  defaultValueInSeconds);
         if(value <= 0) {
             value = defaultValueInSeconds;
@@ -38,15 +38,15 @@ public class ErrorEmailThrottle implements TriggeringEventEvaluator {
 
     public ErrorEmailThrottle() {
         this(
-             getTimeIntervalPropertyInSeconds("emailInterval", 15 * 60),
-             getTimeIntervalPropertyInSeconds("triggerThrottleTime", 1 * 60),
-             getTimeIntervalPropertyInSeconds("stopThrottleTime", 60 * 60)
+             getTimeIntervalPropertyInMilliSeconds("throttleIfUnderSecs", 1 * 60),
+             getTimeIntervalPropertyInMilliSeconds("emailIntervalInSecs", 15 * 60),
+             getTimeIntervalPropertyInMilliSeconds("normalAfterSecs", 60 * 60)
         );
     }
 
-    public ErrorEmailThrottle(long throttledEmailIntervalMilliSecs, long throttleModeTriggerTimeMilliSecs, long throttleModeStopTimeMilliSecs) {
-        this.throttledEmailIntervalMilliSecs = throttledEmailIntervalMilliSecs;
+    public ErrorEmailThrottle(long throttleModeTriggerTimeMilliSecs, long throttledEmailIntervalMilliSecs, long throttleModeStopTimeMilliSecs) {
         this.throttleModeTriggerTimeMilliSecs =throttleModeTriggerTimeMilliSecs;
+        this.throttledEmailIntervalMilliSecs = throttledEmailIntervalMilliSecs;
         this.throttleModeStopTimeMilliSecs = throttleModeStopTimeMilliSecs;
     }
 

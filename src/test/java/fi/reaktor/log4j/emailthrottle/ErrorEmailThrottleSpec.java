@@ -92,7 +92,7 @@ public class ErrorEmailThrottleSpec extends Specification<ErrorEmailThrottle> {
     public class EmailThrottleWithCustomIntervals {
 
         public ErrorEmailThrottle create() {
-            return new ErrorEmailThrottle(60 * 1000, 15 * 1000, 60 * 1000);
+            return new ErrorEmailThrottle(15 * 1000, 60 * 60 * 1000, 60 * 1000);
         }
 
         public void throttlesSecondAndThirdErrorIfSecondIsUnder15SecondsApart() {
