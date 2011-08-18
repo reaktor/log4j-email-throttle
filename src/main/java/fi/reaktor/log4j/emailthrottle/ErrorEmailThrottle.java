@@ -56,6 +56,10 @@ public class ErrorEmailThrottle implements TriggeringEventEvaluator {
 
     @Override
     public synchronized boolean isTriggeringEvent(LoggingEvent event) {
+        if(isInThrottleMode() && shouldDisableThrottle(event)) {
+            inThrottleMode = false;
+            return triggeringEvent(event);
+        }
         if(!eventLevelIsGreaterOrEqual(event, Level.ERROR)) {
             return false;
         }
@@ -82,9 +86,6 @@ public class ErrorEmailThrottle implements TriggeringEventEvaluator {
 
     private boolean isThrottleTimeExceeded(LoggingEvent event) {
         if(lastTriggerTime + throttledEmailIntervalMilliSecs < event.timeStamp) {
-            if(shouldDisableThrottle(event)) {
-                inThrottleMode = false;
-            }
             return triggeringEvent(event);
         }
         return notTriggeringEvent(event);

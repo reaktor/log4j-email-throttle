@@ -56,6 +56,17 @@ public class ErrorEmailThrottleSpec extends Specification<ErrorEmailThrottle> {
             specify(context.isInThrottleMode(), should.equal(true));
         }
 
+        public void throttleModeIsDisabledAndEmailSentIfThrottleTimeIsExceededEvenIfLastEventIsNotErrorLevel() {
+            long time1 = System.currentTimeMillis();
+            long time2 = time1 + 500;
+            long time3 = time2 + 61 * 60 * 1000;
+            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(false));
+            specify(context.isInThrottleMode(), should.equal(true));
+            specify(context.isTriggeringEvent(createLogEvent(Level.WARN, time3)), should.equal(true));
+            specify(context.isInThrottleMode(), should.equal(false));
+        }
+
         public void doesNotThrottleSecondErrorIfItIsOverOneMinuteApart() {
             long time1 = System.currentTimeMillis();
             long time2 = time1 + 2 * 60 * 1000;
