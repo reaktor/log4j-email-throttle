@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>fi.reaktor.log4j</groupId>
+    <artifactId>log4j-email-throttle</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>log4j-email-throttle</name>
+    <url>https://github.com/reaktor/log4j-email-throttle</url>
+    <distributionManagement>
+        <repository>
+            <id>Laughing Panda SCP</id>
+            <name>Laughing Panda</name>
+            <url>scpexe://maven.laughingpanda.org:/var/www/w/maven.laughingpanda.org/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>Laughing Panda SCP</id>
+            <name>Laughing Panda</name>
+            <url>scpexe://maven.laughingpanda.org:/var/www/w/maven.laughingpanda.org/maven2/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <scm>
+        <connection>scm:git:git://github.com/reaktor/log4j-email-throttle.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:reaktor/log4j-email-throttle.git</developerConnection>
+        <url>https://github.com/reaktor/log4j-email-throttle</url>
+    </scm>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <repositories>
+        <repository>
+            <id>Laughing Panda</id>
+            <url>http://maven.laughingpanda.org/maven2</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdave</groupId>
+            <artifactId>jdave-junit4</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.6</source>
+            <target>1.6</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+</project>
+
