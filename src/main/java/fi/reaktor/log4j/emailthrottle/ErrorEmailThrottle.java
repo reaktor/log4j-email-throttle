@@ -21,12 +21,34 @@ import org.apache.log4j.spi.TriggeringEventEvaluator;
 
 public class ErrorEmailThrottle implements TriggeringEventEvaluator {
 
-    private static final long THROTTLE_TIME = 15 * 60 * 1000;
-    private static final long THROTTLE_MODE_ON_TRESHOLD = 1 * 60 * 1000;
-    private static final long THROTTLE_MODE_OFF_TRESHOLD = 4 * THROTTLE_TIME;
+    private final long throttledEmailIntervalMilliSecs;
+    private final long throttleModeTriggerTimeMilliSecs;
+    private final long throttleModeStopTimeMilliSecs;
     private long lastTriggerTime = 0;
     private long lastEventTime = 0;
     boolean inThrottleMode = false;
+
+    private static Long getTimeIntervalPropertyInSeconds(String name, long defaultValueInSeconds) {
+        long value = Long.getLong(ErrorEmailThrottle.class.getPackage().getName()+ "." + name,  defaultValueInSeconds);
+        if(value <= 0) {
+            value = defaultValueInSeconds;
+        }
+        return value * 1000;
+    }
+
+    public ErrorEmailThrottle() {
+        this(
+             getTimeIntervalPropertyInSeconds("emailInterval", 15 * 60),
+             getTimeIntervalPropertyInSeconds("triggerThrottleTime", 1 * 60),
+             getTimeIntervalPropertyInSeconds("stopThrottleTime", 60 * 60)
+        );
+    }
+
+    public ErrorEmailThrottle(long throttledEmailIntervalMilliSecs, long throttleModeTriggerTimeMilliSecs, long throttleModeStopTimeMilliSecs) {
+        this.throttledEmailIntervalMilliSecs = throttledEmailIntervalMilliSecs;
+        this.throttleModeTriggerTimeMilliSecs =throttleModeTriggerTimeMilliSecs;
+        this.throttleModeStopTimeMilliSecs = throttleModeStopTimeMilliSecs;
+    }
 
     public boolean isInThrottleMode() {
         return inThrottleMode;
@@ -55,11 +77,11 @@ public class ErrorEmailThrottle implements TriggeringEventEvaluator {
     }
 
     private boolean shouldEnableThrottle(LoggingEvent event) {
-        return lastEventTime + THROTTLE_MODE_ON_TRESHOLD > event.timeStamp;
+        return lastEventTime + throttleModeTriggerTimeMilliSecs > event.timeStamp;
     }
 
     private boolean isThrottleTimeExceeded(LoggingEvent event) {
-        if(lastTriggerTime + THROTTLE_TIME < event.timeStamp) {
+        if(lastTriggerTime + throttledEmailIntervalMilliSecs < event.timeStamp) {
             if(shouldDisableThrottle(event)) {
                 inThrottleMode = false;
             }
@@ -69,7 +91,7 @@ public class ErrorEmailThrottle implements TriggeringEventEvaluator {
     }
 
     private boolean shouldDisableThrottle(LoggingEvent event) {
-        return lastEventTime + THROTTLE_MODE_OFF_TRESHOLD < event.timeStamp;
+        return lastEventTime + throttleModeStopTimeMilliSecs < event.timeStamp;
     }
 
     private boolean triggeringEvent(LoggingEvent event) {
