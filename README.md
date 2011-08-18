@@ -2,7 +2,7 @@ Simple TriggeringEventEvaluator for Log4j SMTPAppender
 ======================================================
 
 Trigger throttles amount of emails so that in persistent failure situation,
-appender won't send thousands of separate emails but a consolidated one of all errors on configured interval.
+[SMTPAppender] won't send thousands of separate emails but a consolidated one of all errors on configured interval.
 
 How To Install It?
 -----------------
@@ -30,6 +30,7 @@ How To Use It?
 Configure in your SMTPAppender as usual but set ErrorEmailThrottle as EvaluatorClass
 
 For example:
+
     log4j.appender.email=org.apache.log4j.net.SMTPAppender
     # WARN means that WARN messages are saves as context in the alert mail -> triggering error is the last in mail.
     log4j.appender.email.threshold=WARN
@@ -60,6 +61,7 @@ In Throttle mode ErrorEmailThrottle trigges email sending only time to time (by 
 If no error occurs in longer time (bu default after 1 hour: `normalAfterSecs`) ErrorEmailThrottle enters back to normal mode and sends errors in buffer.
 
 You can change default values by setting thise System properties (times in seconds):
+
     fi.reaktor.log4j.emailthrottle.throttleIfUnderSecs=60
     fi.reaktor.log4j.emailthrottle.emailIntervalInSecs=900
     fi.reaktor.log4j.emailthrottle.normalAfterSecs=3600
@@ -75,7 +77,7 @@ Eespecially if you have configured treshold=ERROR for SMTPAppender.
 License
 -------
 
-Copyright © 2010 original author or authors
+Copyright Â© 2010 original author or authors
 
 Licensed under the
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
