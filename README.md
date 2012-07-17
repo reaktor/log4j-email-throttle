@@ -34,7 +34,7 @@ For example:
     log4j.appender.email=org.apache.log4j.net.SMTPAppender
     # WARN means that WARN messages are saves as context in the alert mail -> triggering error is the last in mail.
     log4j.appender.email.threshold=WARN
-    # amount of log rows be sent as context
+    # amount of log events to be sent as context (also max log event count in buffered emails)
     log4j.appender.email.bufferSize=50
     log4j.appender.email.EvaluatorClass=fi.reaktor.log4j.emailthrottle.ErrorEmailThrottle
     log4j.appender.email.SMTPHost=localhost
@@ -56,19 +56,19 @@ This can cause thousands of emails for instance if your database or name server 
 When erros occur only occasionally ErrorEmailThrottle works same way as default and sends all errors directly (with context).
 
 But if previous error was under only some time (by default 1 minute: `throttleIfUnderSecs`) ago it goes into Throttle mode .
-In Throttle mode ErrorEmailThrottle trigges email sending only time to time (by default every 15 minutes: `emailIntervalInSecs`).
+In Throttle mode ErrorEmailThrottle triggers email sending only time to time (by default every 15 minutes: `emailIntervalInSecs`).
 
-If no error occurs in longer time (bu default after 1 hour: `normalAfterSecs`) ErrorEmailThrottle enters back to normal mode and sends errors in buffer.
+If no error occurs in a longer time (by default after 1 hour: `normalAfterSecs`) ErrorEmailThrottle enters back to normal mode and sends errors in buffer.
 
-You can change default values by setting thise System properties (times in seconds):
+You can change default values by setting these System properties (times in seconds):
 
     fi.reaktor.log4j.emailthrottle.throttleIfUnderSecs=60
     fi.reaktor.log4j.emailthrottle.emailIntervalInSecs=900
     fi.reaktor.log4j.emailthrottle.normalAfterSecs=3600
 
 Note! Check of returning to normal mode is made only when ErrorEmailThrottle receives a logging event for evaluating.
-So after being in throttle mode you may receive with some new error some erros which were buffered in previous error situation.
-Eespecially if you have configured treshold=ERROR for SMTPAppender.
+So after being in throttle mode you may receive with a new error some old erros which were buffered in previous error situation.
+Especially if you have configured treshold=ERROR for SMTPAppender.
 
 
 [SMTPAppender]: http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/net/SMTPAppender.html
