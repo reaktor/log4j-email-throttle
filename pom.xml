@@ -3,32 +3,14 @@
     <groupId>fi.reaktor.log4j</groupId>
     <artifactId>log4j-email-throttle</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>log4j-email-throttle</name>
     <url>https://github.com/reaktor/log4j-email-throttle</url>
-    <distributionManagement>
-        <repository>
-            <id>Laughing Panda SCP</id>
-            <name>Laughing Panda</name>
-            <url>scpexe://maven.laughingpanda.org:/var/www/w/maven.laughingpanda.org/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <id>Laughing Panda SCP</id>
-            <name>Laughing Panda</name>
-            <url>scpexe://maven.laughingpanda.org:/var/www/w/maven.laughingpanda.org/maven2/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
     <scm>
         <connection>scm:git:git://github.com/reaktor/log4j-email-throttle.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:reaktor/log4j-email-throttle.git</developerConnection>
         <url>https://github.com/reaktor/log4j-email-throttle</url>
     </scm>
-    <repositories>
-        <repository>
-            <id>Laughing Panda</id>
-            <url>http://maven.laughingpanda.org/maven2</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>log4j</groupId>
@@ -36,9 +18,9 @@
             <version>1.2.16</version>
         </dependency>
         <dependency>
-            <groupId>org.jdave</groupId>
-            <artifactId>jdave-junit4</artifactId>
-            <version>1.1</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -48,8 +30,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.7</source>
+            <target>1.7</target>
           </configuration>
         </plugin>
         <plugin>
@@ -59,16 +41,6 @@
             <includes>
               <include>**/*Spec.java</include>
             </includes>
-            <systemProperties>
-              <property>
-                <name>jdave.tools.specdox.format</name>
-                <value>xml</value>
-              </property>
-              <property>
-                <name>jdave.tools.specdox.dir</name>
-                <value>target/jdave</value>
-              </property>
-            </systemProperties>
           </configuration>
         </plugin>
         <plugin>
@@ -83,19 +55,7 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <!-- explicitly define maven-deploy-plugin after source to force exec order -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>deploy</id>
-              <phase>deploy</phase>
-              <goals><goal>deploy</goal></goals>
-            </execution>
-          </executions>
-        </plugin>
-        </plugins>
+      </plugins>
     </build>
 </project>
 
