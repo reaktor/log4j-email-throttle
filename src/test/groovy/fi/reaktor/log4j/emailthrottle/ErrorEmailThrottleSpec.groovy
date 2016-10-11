@@ -99,10 +99,10 @@ class ErrorEmailThrottleSpec {
 
     @Test
     void throttlesSecondAndThirdErrorIfSecondIsUnder15SecondsApart() {
-        ErrorEmailThrottle context = new ErrorEmailThrottle(15 * 1000, 60 * 60 * 1000, 60 * 1000)
+        ErrorEmailThrottle context = new ErrorEmailThrottle(timeInMillis(15) , timeInMillis(60 * 60), timeInMillis(60))
         long time1 = System.currentTimeMillis()
         long time2 = time1 + 500
-        long time3 = time2 + 45 * 1000
+        long time3 = time2 + timeInMillis(45)
 
         context.isTriggeringEvent(createLogEvent(Level.ERROR, time1))
         assert(!context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)))
@@ -113,9 +113,9 @@ class ErrorEmailThrottleSpec {
 
     @Test
     void doesNotThrottleSecondErrorIfItIsOver15SecondsApart() {
-        ErrorEmailThrottle context = new ErrorEmailThrottle(15 * 1000, 60 * 60 * 1000, 60 * 1000)
+        ErrorEmailThrottle context = new ErrorEmailThrottle(timeInMillis(15) , timeInMillis(60 * 60), timeInMillis(60))
         long time1 = System.currentTimeMillis()
-        long time2 = time1 + 45 * 1000
+        long time2 = time1 + timeInMillis(45)
 
         context.isTriggeringEvent(createLogEvent(Level.ERROR, time1))
         assert(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)))
@@ -123,11 +123,11 @@ class ErrorEmailThrottleSpec {
 
     @Test
     void disablesThrottleModeIfThirdErrorIsMoreThanAMinuteApart() {
-        ErrorEmailThrottle context = new ErrorEmailThrottle(15 * 1000, 60 * 60 * 1000, 60 * 1000)
+        ErrorEmailThrottle context = new ErrorEmailThrottle(timeInMillis(15) , timeInMillis(60 * 60), timeInMillis(60))
         long time1 = System.currentTimeMillis()
         long time2 = time1 + 500
-        long time3 = time2 + 15 * 60 * 1000
-        long time4 = time3 + 2 * 60 * 1000
+        long time3 = time2 + timeInMillis(15 * 60)
+        long time4 = time3 + timeInMillis(2 * 60)
 
         context.isTriggeringEvent(createLogEvent(Level.ERROR, time1))
         assert(!context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)))
@@ -140,5 +140,9 @@ class ErrorEmailThrottleSpec {
 
     private LoggingEvent createLogEvent(Level level, long time) {
         return new LoggingEvent("test", new RootLogger(Level.INFO) , time, level, "test msg", null)
+    }
+
+    private Long timeInMillis(long seconds){
+        return seconds * 1000
     }
 }

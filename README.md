@@ -7,15 +7,18 @@ Trigger throttles amount of emails so that in persistent failure situation,
 How To Install It?
 -----------------
 
-If you're using Maven 2, just add the following dependency block into your POM file :
+Clone the source and build it yourself:
+  git clone repoUrl
+  gradle install
 
+Once you've built the project and installed to your local repo via the above, just add the following dependency block into your POM file (if using maven):
     <dependency>
       <groupId>fi.reaktor.log4j</groupId>
       <artifactId>log4j-email-throttle</artifactId>
-      <version>1.0.0</version>
+      <version>2.0.1</version>
     </dependency>
 
-..or you can just clone the source and build it yourself.
+Dependencies on Groovy 2.4, log4j, javax.mail-api and Java 7
 
 How To Use It?
 --------------
@@ -37,6 +40,9 @@ For example:
     log4j.appender.email.layout=org.apache.log4j.PatternLayout
     log4j.appender.email.layout.conversionPattern=%p %d{ISO8601} %-16.16t %c{1} - %m\n
 
+Alternately, use the ScheduledSmtpAppender in place of SMTPAppender
+    log4j.appender.email.EvaluatorClass=fi.reaktor.log4j.emailthrottle.ScheduledSmtpAppender
+
 How Does It Work?
 -----------------
 
@@ -50,20 +56,21 @@ This can cause thousands of emails for instance if your database or name server 
 When errors occur only occasionally ErrorEmailThrottle works same way as default and sends all errors directly (with context).
 
 But if previous error was under only some time (by default 1 minute: `throttleIfUnderSecs`) ago it goes into Throttle mode .
-In Throttle mode ErrorEmailThrottle triggers email sending only time to time (by default every 15 minutes: `emailIntervalInSecs`).
+In Throttle mode ErrorEmailThrottle triggers email sending only time to time (by default every 10 minutes: `emailIntervalInSecs`).
 
-If no error occurs in a longer time (by default after 1 hour: `normalAfterSecs`) ErrorEmailThrottle
+If no error occurs in a longer time (by default after 30 mins: `normalAfterSecs`) ErrorEmailThrottle
 enters back to normal mode and sends errors in buffer.
 
 You can change default values by setting these System properties (times in seconds):
 
     fi.reaktor.log4j.emailthrottle.throttleIfUnderSecs=60
-    fi.reaktor.log4j.emailthrottle.emailIntervalInSecs=900
-    fi.reaktor.log4j.emailthrottle.normalAfterSecs=3600
+    fi.reaktor.log4j.emailthrottle.emailIntervalInSecs=600
+    fi.reaktor.log4j.emailthrottle.normalAfterSecs=1800
 
 Note! Check of returning to normal mode is made only when ErrorEmailThrottle receives a logging event for evaluating.
 So after being in throttle mode you may receive with a new error some old errors which were buffered in previous error situation.
 Especially if you have configured threshold=ERROR for SMTPAppender.
+You can alleviate this by using the included ScheduledSmtpAppender which will try to flush the buffer every 10 minutes.  Config shown above.
 
 
 [SMTPAppender]: http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/net/SMTPAppender.html
