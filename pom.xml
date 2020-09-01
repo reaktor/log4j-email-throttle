@@ -3,20 +3,15 @@
     <groupId>fi.reaktor.log4j</groupId>
     <artifactId>log4j-email-throttle</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0</version>
     <name>log4j-email-throttle</name>
     <url>https://github.com/reaktor/log4j-email-throttle</url>
     <distributionManagement>
         <repository>
-            <id>Laughing Panda SCP</id>
-            <name>Laughing Panda</name>
-            <url>scpexe://maven.laughingpanda.org:/var/www/w/maven.laughingpanda.org/maven2</url>
+            <id>github</id>
+            <name>GitHub Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/reaktor/log4j-email-throttle</url>
         </repository>
-        <snapshotRepository>
-            <id>Laughing Panda SCP</id>
-            <name>Laughing Panda</name>
-            <url>scpexe://maven.laughingpanda.org:/var/www/w/maven.laughingpanda.org/maven2/snapshots</url>
-        </snapshotRepository>
     </distributionManagement>
     <scm>
         <connection>scm:git:git://github.com/reaktor/log4j-email-throttle.git</connection>
@@ -87,4 +82,3 @@
         </plugins>
     </build>
 </project>
-

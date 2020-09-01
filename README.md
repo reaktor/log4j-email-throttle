@@ -12,15 +12,16 @@ If you're using Maven 2, just add the following dependency block into your POM f
     <dependency>
       <groupId>fi.reaktor.log4j</groupId>
       <artifactId>log4j-email-throttle</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
 
-  and Laughing Panda repository, if you are not allready using it:
+  and Github packages repository:
 
-    <repository>
-        <id>Laughing Panda</id>
-        <url>http://maven.laughingpanda.org/maven2</url>
-    </repository>
+  <repository>
+      <id>github</id>
+      <name>GitHub Reaktor Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/reaktor/log4j-email-throttle</url>
+  </repository>
 
 ..or you can just clone the source and build it yourself.
 
