@@ -3,7 +3,7 @@
     <groupId>fi.reaktor.log4j</groupId>
     <artifactId>log4j-email-throttle</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <name>log4j-email-throttle</name>
     <url>https://github.com/reaktor/log4j-email-throttle</url>
     <distributionManagement>
