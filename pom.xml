@@ -24,10 +24,6 @@
         <url>https://github.com/reaktor/log4j-email-throttle</url>
     </scm>
     <repositories>
-        <repository>
-            <id>Laughing Panda</id>
-            <url>http://maven.laughingpanda.org/maven2</url>
-        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -36,9 +32,9 @@
             <version>1.2.17</version>
         </dependency>
         <dependency>
-            <groupId>org.jdave</groupId>
-            <artifactId>jdave-junit4</artifactId>
-            <version>1.1</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.6.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -61,16 +57,6 @@
             <includes>
               <include>**/*Spec.java</include>
             </includes>
-            <systemProperties>
-              <property>
-                <name>jdave.tools.specdox.format</name>
-                <value>xml</value>
-              </property>
-              <property>
-                <name>jdave.tools.specdox.dir</name>
-                <value>target/jdave</value>
-              </property>
-            </systemProperties>
           </configuration>
         </plugin>
         <plugin>

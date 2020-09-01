@@ -15,102 +15,115 @@
 */
 package fi.reaktor.log4j.emailthrottle;
 
-import jdave.Specification;
-import jdave.junit4.JDaveRunner;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.RootLogger;
-import org.junit.runner.RunWith;
 
-@RunWith(JDaveRunner.class)
-public class ErrorEmailThrottleSpec extends Specification<ErrorEmailThrottle> {
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ErrorEmailThrottleSpec {
+
+    protected ErrorEmailThrottle throttle;
+
+    @Nested
     public class EmailThrottleWithDefaultIntervals {
 
-        public ErrorEmailThrottle create() {
-            return new ErrorEmailThrottle();
+        @BeforeEach
+        void createInstance() {
+            throttle = new ErrorEmailThrottle();
         }
 
+        @Test
         public void doesNotThrottleFatalErrors() {
-            specify(context.isTriggeringEvent(createLogEvent(Level.FATAL, System.currentTimeMillis())), should.equal(true));
-            specify(context.isInThrottleMode(), should.equal(false));
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.FATAL, System.currentTimeMillis())));
+            assertFalse(throttle.isInThrottleMode());
         }
 
+        @Test
         public void doesNotThrottleFirstErrorEvent() {
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, System.currentTimeMillis())), should.equal(true));
-            specify(context.isInThrottleMode(), should.equal(false));
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, System.currentTimeMillis())));
+            assertFalse(throttle.isInThrottleMode());
         }
 
+        @Test
         public void lowerThanErrorLevelEventsAreAreNotTriggering() {
-            specify(context.isTriggeringEvent(createLogEvent(Level.INFO, System.currentTimeMillis())), should.equal(false));
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.INFO, System.currentTimeMillis())));
         }
 
+        @Test
         public void throttlesSecondAndThirdErrorIfSecondIsUnderOneMinuteApart() {
             long time1 = System.currentTimeMillis();
             long time2 = time1 + 500;
             long time3 = time2 + 2 * 60 * 1000;
-            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(false));
-            specify(context.isInThrottleMode(), should.equal(true));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time3)), should.equal(false));
-            specify(context.isInThrottleMode(), should.equal(true));
+            throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time2)));
+            assertTrue(throttle.isInThrottleMode());
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time3)));
+            assertTrue(throttle.isInThrottleMode());
         }
 
+        @Test
         public void throttleModeIsDisabledAndEmailSentIfThrottleTimeIsExceededEvenIfLastEventIsNotErrorLevel() {
             long time1 = System.currentTimeMillis();
             long time2 = time1 + 500;
             long time3 = time2 + 61 * 60 * 1000;
-            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(false));
-            specify(context.isInThrottleMode(), should.equal(true));
-            specify(context.isTriggeringEvent(createLogEvent(Level.WARN, time3)), should.equal(true));
-            specify(context.isInThrottleMode(), should.equal(false));
+            throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time2)));
+            assertTrue(throttle.isInThrottleMode());
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time3)));
+            assertFalse(throttle.isInThrottleMode());
         }
 
+        @Test
         public void doesNotThrottleSecondErrorIfItIsOverOneMinuteApart() {
             long time1 = System.currentTimeMillis();
             long time2 = time1 + 2 * 60 * 1000;
-            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(true));
+            throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time2)));
         }
 
+        @Test
         public void disablesThrottleModeIfThirdErrorIsMoreThanAnHourApart() {
             long time1 = System.currentTimeMillis();
             long time2 = time1 + 500;
             long time3 = time2 + 90 * 60 * 1000;
             long time4 = time3 + 2 * 60 * 1000;
-            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(false));
-            specify(context.isInThrottleMode(), should.equal(true));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time3)), should.equal(true));
-            specify(context.isInThrottleMode(), should.equal(false));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time4)), should.equal(true));
-            specify(context.isInThrottleMode(), should.equal(false));
+            throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time2)));
+            assertTrue(throttle.isInThrottleMode());
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time3)));
+            assertFalse(throttle.isInThrottleMode());
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time4)));
+            assertFalse(throttle.isInThrottleMode());
         }
 
     }
+
+    @Nested
     public class EmailThrottleWithCustomIntervals {
 
-        public ErrorEmailThrottle create() {
-            return new ErrorEmailThrottle(15 * 1000, 60 * 60 * 1000, 60 * 1000);
+        @BeforeEach
+        void createInstance() {
+            throttle = new ErrorEmailThrottle(15 * 1000, 60 * 60 * 1000, 60 * 1000);
         }
 
         public void throttlesSecondAndThirdErrorIfSecondIsUnder15SecondsApart() {
             long time1 = System.currentTimeMillis();
             long time2 = time1 + 500;
             long time3 = time2 + 45 * 1000;
-            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(false));
-            specify(context.isInThrottleMode(), should.equal(true));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time3)), should.equal(false));
-            specify(context.isInThrottleMode(), should.equal(true));
+            throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time2)));
+            assertTrue(throttle.isInThrottleMode());
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time3)));
+            assertTrue(throttle.isInThrottleMode());
         }
 
         public void doesNotThrottleSecondErrorIfItIsOver15SecondsApart() {
             long time1 = System.currentTimeMillis();
             long time2 = time1 + 45 * 1000;
-            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(true));
+            throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time2)));
         }
 
         public void disablesThrottleModeIfThirdErrorIsMoreThanAMinuteApart() {
@@ -118,15 +131,14 @@ public class ErrorEmailThrottleSpec extends Specification<ErrorEmailThrottle> {
             long time2 = time1 + 500;
             long time3 = time2 + 15 * 60 * 1000;
             long time4 = time3 + 2 * 60 * 1000;
-            context.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time2)), should.equal(false));
-            specify(context.isInThrottleMode(), should.equal(true));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time3)), should.equal(true));
-            specify(context.isInThrottleMode(), should.equal(false));
-            specify(context.isTriggeringEvent(createLogEvent(Level.ERROR, time4)), should.equal(true));
-            specify(context.isInThrottleMode(), should.equal(false));
+            throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time1));
+            assertFalse(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time2)));
+            assertTrue(throttle.isInThrottleMode());
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time3)));
+            assertFalse(throttle.isInThrottleMode());
+            assertTrue(throttle.isTriggeringEvent(createLogEvent(Level.ERROR, time4)));
+            assertFalse(throttle.isInThrottleMode());
         }
-
     }
 
     private LoggingEvent createLogEvent(Level level, long time) {
