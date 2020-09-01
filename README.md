@@ -17,11 +17,11 @@ If you're using Maven 2, just add the following dependency block into your POM f
 
   and Github packages repository:
 
-  <repository>
+    <repository>
       <id>github</id>
       <name>GitHub Reaktor Apache Maven Packages</name>
       <url>https://maven.pkg.github.com/reaktor/log4j-email-throttle</url>
-  </repository>
+    </repository>
 
 ..or you can just clone the source and build it yourself.
 
